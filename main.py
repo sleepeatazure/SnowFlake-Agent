@@ -8,20 +8,21 @@ from utils.snowflake import query_data_warehouse
 from langchain.vectorstores import FAISS
 from utils.snowddl import Snowddl
 from utils.snowchat_ui import reset_chat_history, extract_code, message_func, is_sql_query
+from langchain.chat_models import ChatOpenAI
 
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 MAX_INPUTS = 3
 chat_history = []
 
 st.set_page_config(
-    page_title="snowChat",
+    page_title="IBM SNOWFLAKE HACKATHON CHATBOT",
     page_icon="❄️",
     layout="centered",
     initial_sidebar_state="auto",
     menu_items={
-        'Report a bug': "https://github.com/kaarthik108/snowChat",
-        'About': '''snowChat is a chatbot designed to help you with Snowflake Database. It is built using OpenAI's GPT-4 and Streamlit. 
-            Go to the GitHub repo to learn more about the project. https://github.com/kaarthik108/snowChat 
+        'Report a bug': "mailto:aniruddhya.dutta1@ibm.com",
+        'About': '''snowChat is a chatbot designed to help you with Snowflake Database. 
+            
             '''
     }
 )
@@ -43,8 +44,8 @@ def load_chain():
 chain = load_chain()
 snow_ddl = Snowddl()
 
-st.title("snowChat")
-st.caption("Talk your way through data")
+st.title("IBM SNOWFLAKE HACKATHON")
+st.caption("YOUR OWN SNOWFLAKE ASSISTANT")
 
 with open("ui/sidebar.md", "r") as sidebar_file:
     sidebar_content = sidebar_file.read()
@@ -65,7 +66,7 @@ st.write(styles_content, unsafe_allow_html=True)
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = [
-        "Hey there, I'm Chatty McQueryFace, your SQL-speaking sidekick, ready to chat up Snowflake and fetch answers faster than a snowball fight in summer! ❄️🔍"]
+        "Hey there, I'm IBM Snowflake hackathon SQL assistant, ready to chat up Snowflake and fetch answers faster! ❄️🔍"]
 if 'past' not in st.session_state:
     st.session_state['past'] = ["Hey!"]
 if "input" not in st.session_state:
@@ -75,7 +76,7 @@ if "stored_session" not in st.session_state:
 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = [
-        ("Hello! I'm a chatbot designed to help you with Snowflake Database.")]
+        ("Hello! I'm a IBM Snowflake hackathon SQL assistant designed to help you with Snowflake Database.")]
 
 if "query_count" not in st.session_state:
     st.session_state["query_count"] = 0
@@ -143,6 +144,7 @@ def generate_df(to_extract: str):
         df (pandas.DataFrame): The dataframe generated from the query
 
     '''
+    
     df = query_data_warehouse(to_extract)
     st.dataframe(df, use_container_width=True)
 
@@ -154,11 +156,15 @@ with messages_container:
             message_func(st.session_state["generated"][i])
             if i > 0 and is_sql_query(st.session_state["generated"][i]):
                 code = extract_code(st.session_state["generated"][i])
+                #print(code)
                 try:
                     if code:
                         generate_df(code)
+                        
                 except:  # noqa: E722
                     pass
+
+print('success')
 
 if st.session_state['query_count'] == MAX_INPUTS and RESET:
     st.warning(

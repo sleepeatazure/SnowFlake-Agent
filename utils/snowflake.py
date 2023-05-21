@@ -29,6 +29,7 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
         parameters = {}
     query = sql
     
+    
     try:
         cur.execute("USE DATABASE " + st.secrets["DATABASE"])
         cur.execute("USE SCHEMA " + st.secrets["SCHEMA"])
@@ -43,6 +44,8 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
         print("closing cursor")
 
     df = pd.DataFrame(all_rows)
+    print(df)
     df.columns = field_names
     return df
     
+
