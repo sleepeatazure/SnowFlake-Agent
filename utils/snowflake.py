@@ -45,3 +45,4 @@ def query_data_warehouse(sql: str, parameters=None) -> any:
     df = pd.DataFrame(all_rows)
     df.columns = field_names
     return df
+    
